@@ -19,10 +19,10 @@ import (
 
 // Studiengang represents a study course at HAW Hamburg
 type Studiengang struct {
-	ID           string     `json:"id"`
-	Name         string     `json:"name"`
-	Beschreibung string     `json:"beschreibung"`
-	Kontakt      *Professor `json:"kontakt"`
+	ID           string       `json:"id"`
+	Name         string       `json:"name"`
+	Beschreibung string       `json:"beschreibung"`
+	Kontakt      *[]Professor `json:"kontakt"`
 }
 
 // Kontakt represents one of our nice profs
@@ -127,9 +127,31 @@ func main() {
 	r := mux.NewRouter()
 
 	// Hardcoded data - @todo: add database
-	studiengaenge = append(studiengaenge, Studiengang{ID: "1", Name: "Angewandte Informatik", Beschreibung: "Programmieren, programmieren, programmieren...", Kontakt: &Professor{Vorname: "Stefan", Nachname: "Sarstedt"}})
-	studiengaenge = append(studiengaenge, Studiengang{ID: "2", Name: "Wirtschaftsinformatik", Beschreibung: "Programmieren, und ein bisschen BWL...", Kontakt: &Professor{Vorname: "Ulrike", Nachname: "Steffens"}})
-	studiengaenge = append(studiengaenge, Studiengang{ID: "2", Name: "Technische Informatik", Beschreibung: "Ich mag Platinen...", Kontakt: &Professor{Vorname: "Thomas", Nachname: "Lehmann"}})
+	studiengaenge = append(studiengaenge, Studiengang{
+		ID:           "1",
+		Name:         "Angewandte Informatik",
+		Beschreibung: "Programmieren, programmieren, programmieren...",
+		Kontakt: &[]Professor{
+			Professor{Vorname: "Stefan", Nachname: "Sarstedt"},
+			Professor{Vorname: "Christian", Nachname: "Bargmann"},
+		},
+	})
+	studiengaenge = append(studiengaenge, Studiengang{
+		ID:           "2",
+		Name:         "Wirtschaftsinformatik",
+		Beschreibung: "Programmieren, und ein bisschen BWL...",
+		Kontakt: &[]Professor{
+			Professor{Vorname: "Ulrike", Nachname: "Steffens"},
+		},
+	})
+	studiengaenge = append(studiengaenge, Studiengang{
+		ID:           "2",
+		Name:         "Technische Informatik",
+		Beschreibung: "Ich mag Platinen...",
+		Kontakt: &[]Professor{
+			Professor{Vorname: "Thomas", Nachname: "Lehmann"},
+		},
+	})
 
 	// Route handles & endpoints
 	setupEndpoints(r)
@@ -139,7 +161,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
 
-func setupEndpoints(r  *mux.Router) {
+func setupEndpoints(r *mux.Router) {
 
 	r.HandleFunc("/studiengaenge", getStudiengaenge).Methods("GET")
 	r.HandleFunc("/studiengaenge/{id}", getStudiengang).Methods("GET")
